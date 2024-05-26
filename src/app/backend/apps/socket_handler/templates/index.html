@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Socket IO Notification System</title>
+</head>
+
+<body>
+    <div id="channelsetup">
+        <label for="user_id">Provide User ID:</label>
+        <input id="user_id" type="text" autocomplete="off" />
+        <label for="channel_name">Provide Channel Name:</label>
+        <input id="channel_name" type="text" autocomplete="off" />
+        <button onclick="subscribe_to_channel()">Subscribe</button>
+        <div id="notificationlist">
+            <ul id="notifications"></ul>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <script>
+        var socket = io.connect("http://" + document.domain + ":" + location.port);
+        socket.on("connect", function () {
+            console.log("connected to server");
+        });
+
+        function subscribe_to_channel() {
+            var user_id = document.getElementById("user_id").value;
+            var channel_name = document.getElementById("channel_name").value;
+            var data = { "user_id": user_id, "channel_name": channel_name };
+            socket.emit("subscribe_to_channel", data);
+        }
+
+        socket.on("post_on_channel", function (data) {
+            var notifications = document.getElementById("notifications");
+            var li = document.createElement("li");
+            li.textContent = data.user_id + ': ' + data.post_message; // Ensure data contains post_message
+            notifications.appendChild(li);
+        });
+    </script>
+</body>
+</html>

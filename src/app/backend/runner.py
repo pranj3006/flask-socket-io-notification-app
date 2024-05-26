@@ -21,8 +21,10 @@ def create_app(config_name:str):
 
     register_extensions(app)
     from apps.healthcheck.blueprints import healthcheck_bp,healthcheck_token_bp
+    from apps.socket_handler.blueprints import socketio_bp
     app.register_blueprint(healthcheck_bp,url_prefix="/api/healthcheck/")
     app.register_blueprint(healthcheck_token_bp,url_prefix="/api/token/healthcheck/")
+    app.register_blueprint(socketio_bp,url_prefix="/api/socketio/")
 
     return app
 
