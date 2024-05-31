@@ -4,38 +4,87 @@
 <head>
     <meta charset="UTF-8">
     <title>Flask Socket IO Notification System</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
 </head>
 
 <body>
-    <div id="channelsetup">
-        <label for="user_id">Provide User ID:</label>
-        <input id="user_id" type="text" autocomplete="off" />
-        <label for="channel_name">Provide Channel Name:</label>
-        <input id="channel_name" type="text" autocomplete="off" />
-        <button onclick="subscribe_to_channel()">Subscribe</button>
-        <div id="notificationlist">
-            <ul id="notifications"></ul>
-        </div>
+    
+    <div>
+        <h2>Add Channel</h2>
+        <form id="channel-form">
+            <input type="text" id="channel-name" placeholder="Enter channel name">
+            <button type="submit">Add Channel</button>
+        </form>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+
+    <div>
+        <h2>Join Channel</h2>
+        <form id="join-form">
+            <input type="text" id="username" placeholder="Enter username">
+            <select id="channel-select">
+                {% for channel in channels %}
+                    <option value="{{ channel }}">{{ channel }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Join Channel</button>
+        </form>
+    </div>
+    <div id="messages"></div>
+    
     <script>
-        var socket = io.connect("http://" + document.domain + ":" + location.port);
-        socket.on("connect", function () {
-            console.log("connected to server");
-        });
+        $(document).ready(function() {
+            var socket = io.connect("http://" + document.domain + ":" + location.port);
+            // var socket = io();
+            $('#channel-form').submit(function(event) {
+                event.preventDefault();
+                var channelName = $('#channel-name').val();
+                $.ajax({
+                    url: '/api/socketio/socketio/createchannel',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ channel_name: channelName }),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#channel-name').val('');
+                        }
+                    }
+                });            
+                
+                });
+            
+            socket.on('update_channels', function(channels) {
+                console.log("channels",channels);
+                $('#channel-select').empty();
+                channels.forEach(function(channel) {
+                    $('#channel-select').append($('<option>', {
+                        value: channel,
+                        text: channel
+                    }));
+                });
+            });
+            // socket.on("connect", function () {
+            // console.log("connected to server");
+            // });
+            // function connect_user(){
+            //     var user_id = document.getElementById("user_id").value;
+            //     var data = { "user_id": user_id };
+            //     socket.emit("connect", data);
+            // }
 
-        function subscribe_to_channel() {
-            var user_id = document.getElementById("user_id").value;
-            var channel_name = document.getElementById("channel_name").value;
-            var data = { "user_id": user_id, "channel_name": channel_name };
-            socket.emit("subscribe_to_channel", data);
-        }
+            // function subscribe_to_channel() {
+            //     var user_id = document.getElementById("user_id").value;
+            //     var channel_name = document.getElementById("channel_name").value;
+            //     var data = { "user_id": user_id, "channel_name": channel_name };
+            //     socket.emit("subscribe_to_channel", data);
+            // }
 
-        socket.on("post_on_channel", function (data) {
-            var notifications = document.getElementById("notifications");
-            var li = document.createElement("li");
-            li.textContent = data.user_id + ': ' + data.post_message; // Ensure data contains post_message
-            notifications.appendChild(li);
+            // socket.on("post_on_channel", function (data) {
+            //     var notifications = document.getElementById("notifications");
+            //     var li = document.createElement("li");
+            //     li.textContent = data.user_id + ': ' + data.post_message; // Ensure data contains post_message
+            //     notifications.appendChild(li);
+            // });
         });
     </script>
 </body>

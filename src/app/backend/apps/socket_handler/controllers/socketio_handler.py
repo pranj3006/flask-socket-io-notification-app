@@ -1,6 +1,7 @@
 import logging
 from flask_socketio import SocketIO, emit
-from manage import socketio
+from socketio_def import socketio
+
 class SocketIOHandler:
     def __init__(self, socketio):
         self.socketio = socketio
@@ -10,22 +11,26 @@ class SocketIOHandler:
 
     def register_events(self):
         self.socketio.on_event('connect', self.handle_connect)
-        self.socketio.on_event('create_channel', self.create_channel)
-        self.socketio.on_event('subscribe_to_channel', self.subscribe_to_channel)
-        self.socketio.on_event('post_on_channel', self.post_on_channel)
+        # self.socketio.on_event('create_channel', self.create_channel)
+        # self.socketio.on_event('subscribe_to_channel', self.subscribe_to_channel)
+        # self.socketio.on_event('post_on_channel', self.post_on_channel)
         self.socketio.on_event('disconnect', self.handle_disconnect)
         
 
     def handle_connect(self):
         logging.info('Client connected')
-        emit('response', {'message': 'Connected to server'})
+        self.get_channels_list()        
     
     def create_channel(self,dct_data:dict):
         channel_name = dct_data.get("channel_name")
         message = f'Channel - {channel_name} Created'
         logging.info(message)
         self.active_channels[channel_name] = set()
-        emit('response', {'message': message})
+        self.get_channels_list()
+
+    def get_channels_list(self):
+        lst_channels = list(self.active_channels.keys())
+        self.socketio.emit('update_channels', lst_channels)
 
     def subscribe_to_channel(self,dct_data:dict):
         channel_name = dct_data.get("channel_name")

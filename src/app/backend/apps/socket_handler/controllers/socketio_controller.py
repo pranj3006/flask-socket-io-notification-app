@@ -3,11 +3,13 @@ Controller for SocketIO APIs
 """
 
 import logging
+from flask_socketio import  emit
+from flask import request
 from apps.socket_handler.dtos import SocketIoDto
 from apps.core.utils import BaseResponseHandler
 from flask_restx import Resource
 from flask import render_template,render_template_string,make_response
-
+from apps.socket_handler.controllers.socketio_handler import serv_socketio_handler
 api_ns = SocketIoDto.api_ns
 responseHandler = BaseResponseHandler()
 
@@ -51,9 +53,13 @@ class CreateChannelController(Resource):
         """
         API To Create a Channel
         """
-        from apps.socket_handler.controllers.socketio_handler import serv_socketio_handler
-        data = api_ns.payload
+        
+        # from apps.socket_handler.controllers.socketio_handler import serv_socketio_handler
+        data = request.get_json()
         channel_name=data.get("channel_name")
-        # Emit the create_channel event
-        serv_socketio_handler.create_channel({'channel_name': channel_name})
-        return {'message': f'Channel {channel_name} creation event emitted'}, 200
+        serv_socketio_handler.create_channel(data)
+        # Emit the create_channel event        
+        # self.create_channel(data)
+        return {'message': f'Channel {channel_name} created '}, 200
+    
+    

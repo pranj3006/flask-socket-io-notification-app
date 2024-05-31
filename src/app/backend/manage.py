@@ -9,9 +9,9 @@ from flask_migrate import Migrate
 from runner import create_app, db
 from flask_jwt_extended import  create_access_token
 from flask_socketio import SocketIO
-
+from socketio_def import socketio
 app = create_app(os.getenv("FLASK_CONFIG","development"))
-socketio = SocketIO(app)
+socketio.init_app(app)
 
 migrate = Migrate(app,db)
 

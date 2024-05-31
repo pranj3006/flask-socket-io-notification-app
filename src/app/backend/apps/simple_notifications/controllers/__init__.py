@@ -1,0 +1,1 @@
+from .simple_notifications__controller import api_ns 

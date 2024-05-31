@@ -1,0 +1,1 @@
+from .simple_notifications_blueprint import module_bp as simple_notification_bp

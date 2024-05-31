@@ -1,0 +1,1 @@
+from .simple_notifications__dto import SimpleNotificationsDto

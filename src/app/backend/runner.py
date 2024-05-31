@@ -21,10 +21,10 @@ def create_app(config_name:str):
 
     register_extensions(app)
     from apps.healthcheck.blueprints import healthcheck_bp,healthcheck_token_bp
-    from apps.socket_handler.blueprints import socketio_bp
+    from apps.simple_notifications.blueprints import simple_notification_bp
     app.register_blueprint(healthcheck_bp,url_prefix="/api/healthcheck/")
     app.register_blueprint(healthcheck_token_bp,url_prefix="/api/token/healthcheck/")
-    app.register_blueprint(socketio_bp,url_prefix="/api/socketio/")
+    app.register_blueprint(simple_notification_bp,url_prefix="/api/simple_notifications/")
 
     return app
 
