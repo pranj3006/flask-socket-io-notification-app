@@ -1,1 +1,1 @@
-from .simple_notifications__controller import api_ns 
+from .simple_notifications_controller import api_ns 

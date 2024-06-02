@@ -9,7 +9,7 @@ def configure_logging():
     Add logging configurations
     """
 
-    log_file = os.getenv("LOG_FILE","app.log")
+    log_file = "./logs/"+os.getenv("LOG_FILE","app.log")
 
     formatter = logging.Formatter('%s(asctime)s - %(name)s - %(levelname)s - %(message)s')
 

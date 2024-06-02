@@ -1,1 +1,1 @@
-from .simple_notifications__dto import SimpleNotificationsDto
+from .simple_notifications_dto import SimpleNotificationsDto

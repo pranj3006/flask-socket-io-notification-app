@@ -22,9 +22,9 @@ class HomeController(Resource):
     def get(self):
         """
         Render the home page of simple notification example,
-        """
+        """        
         headers = {'Content-Type': 'text/html'}
-        html_content = render_template('index.html')
+        html_content = render_template('simple_notifications_templates/index.html')
         return make_response(html_content,200,headers)
 
 @api_ns.route("/send_notification")

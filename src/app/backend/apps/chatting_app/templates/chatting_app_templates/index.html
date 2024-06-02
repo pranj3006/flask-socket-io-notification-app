@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chatting Application with Flask Socket IO Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+</head>
+
+<body>       
+    <div>
+        <h2>Add Username</h2>
+        <form id="add-username-form">
+            <input type="text" id="user-name" placeholder="Enter Username ">
+            <button type="submit">Set Username</button>
+        </form>
+    </div>
+    <div>
+        <h2>Select User to Chat with</h2>
+        <form id="select-user-form"></form>
+            <select id="user-select">
+                <option value="" disabled selected>Select a user</option>
+            </select>
+            <button type="submit">Start Chat</button>
+        </form>
+    </div>
+
+    <div>
+        <h2>Chatting with User</h2>
+        <form id="start-chat-form"></form>
+            <list id="message-list"></list>
+            <input type="text" id="chat-message" placeholder="Enter Message ">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+
+            
+            var socket = io.connect("http://" + document.domain + ":" + location.port);            
+            
+            $('#add-username-form').submit(function(event) {
+                event.preventDefault();
+                var userName = $('#user-name').val();
+                $.ajax({
+                    url: '/api/chatting_app/chatting_app/add_username',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ username: userName }),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#user-name').val('');
+                        }
+                        }
+                    });            
+                });
+
+            socket.on('connected_users_list', function(usernames) {
+                var userList = $('#user-select');                          
+                userList.empty();
+                userList.append('<option value="" disabled selected>Select a user</option>'); // Add default option
+                usernames.forEach(function(username) {
+                userList.append('<option value="' + username + '">' + username + '</option>');
+                });           
+            });
+
+
+        });
+    </script>
+</body>
+</html>

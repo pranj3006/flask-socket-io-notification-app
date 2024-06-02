@@ -1,0 +1,1 @@
+from .chatting_app_blueprint import chatting_app_bp

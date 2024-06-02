@@ -35,4 +35,4 @@ venv/
 
 docker-compose-devenv.yml
 
-
+logs/
